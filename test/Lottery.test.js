@@ -59,11 +59,35 @@ it('requires a minimum amount of ether to enter', async() =>{
             from: accounts[0],
             value: 200,
     })
+    assert(false)
 } // if something goes wrong in the try block , the catch block will be executed
     catch(err){
-        
+        assert(err) // if the error is not null then the test will pass
     }
-     // while using async await code we need to use try catch block to test our block
 })
+    // while using async await code we need to use try catch block to test our block
+
+    it('only manager can call pickWinner', async() =>{
+        try{
+            await lottery.methods.pickWinner().send({
+                from: accounts[1]
+            })
+            assert(false)
+        }
+        catch(err){{
+            assert(err)
+        }
+    }})
+    it('sends money to the winner and resets the players array', async() =>{
+        await Lottery.methods.enter().send({
+            from: accounts[0],
+            value: web3.utils.toWei('2','ether')
+    })
+    const initialBalance = await web3.eth.getBalance(accounts[0])
+    await lottery.methods.pickWinner().send({from: accounts[0]}) 
+    const finalBalance = await web3.eth.getBalance(accounts[0])
+    const difference = finalBalance - initialBalance
+    assert(difference > web3.util.toWei('1.8','ether'))
+}) // assertion of contract being emptied out after the winner is picked can be done
 
 })
